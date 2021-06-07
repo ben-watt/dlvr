@@ -37,3 +37,11 @@ resource "azurerm_servicebus_topic" "messaging-sidecar" {
   namespace_name      = azurerm_servicebus_namespace.messaging-sidecar.name
   enable_partitioning = true
 }
+
+resource "azurerm_servicebus_subscription" "messaging-sidecar" {
+  name                = "messaging-sidecar-subscription"
+  resource_group_name = azurerm_resource_group.messaging-sidecar.name
+  namespace_name      = azurerm_servicebus_namespace.messaging-sidecar.name
+  topic_name          = azurerm_servicebus_topic.messaging-sidecar.name
+  max_delivery_count  = 1
+}
