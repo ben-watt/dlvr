@@ -1,7 +1,9 @@
 .vscode
+.vs
+
 bin
 obj/
-.snowpack
-build
-node_modules
-.vs
+
+.terraform/
+*.tfstate
+*.tfstate.*
