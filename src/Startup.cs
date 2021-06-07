@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Savorboard.CAP.InMemoryMessageQueue;
 using System;
+using System.Net;
+using System.IO;
 
 namespace messaging_sidecar
 {
@@ -29,7 +31,7 @@ namespace messaging_sidecar
             services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -41,10 +43,23 @@ namespace messaging_sidecar
             app.UseEndpoints(endpoints =>
             {
                 // Handles messages from the sidecar application to service bus
-                endpoints.MapPost("/v1/", async context =>
+                endpoints.MapPost("/v1/{topic:required}", async context =>
                 {
-                    var capPublisher = services.GetRequiredService<ICapPublisher>();
-                    await capPublisher.PublishAsync(context.Request.Path, context.Request.Body);
+                    var topic = context.Request.RouteValues["topic"].ToString();
+                    var capPublisher = context.RequestServices.GetRequiredService<ICapPublisher>();
+
+                    using var streamReader = new StreamReader(context.Request.Body);
+                    var body = await streamReader.ReadToEndAsync();
+
+                    try
+                    {
+                        await capPublisher.PublishAsync<object>(topic, body);
+                        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    }
                 });
             });
         }
