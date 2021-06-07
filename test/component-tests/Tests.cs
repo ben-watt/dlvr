@@ -27,6 +27,17 @@ namespace component_tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Fact]
+        public async Task When_sending_a_message_without_a_topic_return_404()
+        {
+            var client = _fixture.CreateClient();
+
+            var message = new Message("hello");
+            var response = await client.PostAsJsonAsync("/v1/", message);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 
     public record Message(string content);
