@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using messaging_sidecar;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace component_tests
