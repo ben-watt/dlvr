@@ -10,19 +10,30 @@ using System.IO;
 using System.Reflection.Emit;
 using DotNetCore.CAP.Internal;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 namespace messaging_sidecar
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
+
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCap(x =>
             {
+                // From config determain the provider to use
+                // InMemory vs ServiceBus
+                // Maybe Kafka?
                 x.UseInMemoryStorage();
                 x.UseInMemoryMessageQueue();
             });
 
+            // Add multiple http clients with different retry policies
             services.AddHttpClient("app", x =>
             {
                 // Create a default client which will point to the relevant application
@@ -31,6 +42,7 @@ namespace messaging_sidecar
                 x.Timeout = new TimeSpan(0, 1, 10);
             });
 
+            // Add subscribers mapping a subscription to a handler
             services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 

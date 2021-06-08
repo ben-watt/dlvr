@@ -1,0 +1,24 @@
+queue_providers:
+  - service_bus:
+      connection_string: ""
+      subscriptions:
+        - name: hello
+          handler: default
+        - name: anther-one
+          handler: default
+
+storage_providers:
+  - type: in_memory
+  - type: database
+    connection_string: ""
+
+handlers:
+  - name: default
+    type: http
+    client: "my-app"
+
+clients:
+  - name: my-app
+    base_uri: "/my-service"
+    port: 8000
+    retry_policy: exponential
