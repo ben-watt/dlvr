@@ -16,7 +16,7 @@ namespace messaging_sidecar
             _client = httpClientFactory.CreateClient("app");
         }
 
-        [CapSubscribe("servicebus.outbound.message")]
+        [CapSubscribe("message-outbound")]
         public void ProcessMessage(object messageBody, [FromCap] CapHeader header)
         {
             // Read in config and determain where to send the message

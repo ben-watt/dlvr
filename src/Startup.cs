@@ -7,6 +7,9 @@ using Savorboard.CAP.InMemoryMessageQueue;
 using System;
 using System.Net;
 using System.IO;
+using System.Reflection.Emit;
+using DotNetCore.CAP.Internal;
+using System.Reflection;
 
 namespace messaging_sidecar
 {
@@ -28,6 +31,7 @@ namespace messaging_sidecar
                 x.Timeout = new TimeSpan(0, 1, 10);
             });
 
+            // Use reflection to generate 
             services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 
@@ -56,7 +60,7 @@ namespace messaging_sidecar
                         await capPublisher.PublishAsync<object>(topic, body);
                         context.Response.StatusCode = (int)HttpStatusCode.OK;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     }
