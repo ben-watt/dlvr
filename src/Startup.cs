@@ -31,7 +31,6 @@ namespace messaging_sidecar
                 x.Timeout = new TimeSpan(0, 1, 10);
             });
 
-            // Use reflection to generate 
             services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 
