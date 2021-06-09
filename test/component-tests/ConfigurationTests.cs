@@ -4,7 +4,7 @@ namespace component_tests
     {
         // Create tests to check our config
         // Example config
-        
+
         public void SampleConfig() 
         {
         }

@@ -16,10 +16,11 @@ namespace messaging_sidecar
             _client = httpClientFactory.CreateClient("app");
         }
 
-        [CapSubscribe("message-outbound")]
+        [CapSubscribe("*")]
         public void ProcessMessage(object messageBody, [FromCap] CapHeader header)
         {
             // Read in config and determain where to send the message
+            // How do I work out where the message is from?
             _client.PostAsJsonAsync("/message-inbound", messageBody ?? default, default);
         }
     }

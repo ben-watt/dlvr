@@ -39,10 +39,12 @@ namespace messaging_sidecar
                 // Create a default client which will point to the relevant application
                 const string appPort = "5000";
                 x.BaseAddress = new Uri($"http://localhost:{appPort}");
-                x.Timeout = new TimeSpan(0, 1, 10);
+                x.Timeout = new TimeSpan(0, 0, 5);
             });
 
             // Add subscribers mapping a subscription to a handler
+            // Maybe able to subscribe to all events using the one handler
+            // Then I can use the client as the way to specify the endpoint to hit
             services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 

@@ -12,13 +12,13 @@ storage_providers:
   - type: database
     connection_string: ""
 
-handlers:
-  - name: default
-    type: http
-    client: "my-app"
-
 clients:
   - name: my-app
     base_uri: "/my-service"
     port: 8000
     retry_policy: exponential
+
+handlers:
+  - name: default
+    type: http
+    client: "my-app"
