@@ -21,8 +21,9 @@ namespace messaging_sidecar
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add multiple http clients with different retry policies
-            services.AddHttpClient("app", x =>
+            // Add multiple http clients with different retry policies dependant on config
+            // for now just keep a default one
+            services.AddHttpClient("default", x =>
             {
                 // Create a default client which will point to the relevant application
                 const string appPort = "5000";
@@ -30,9 +31,9 @@ namespace messaging_sidecar
                 x.Timeout = new TimeSpan(0, 0, 5);
             });
 
-            // Add subscribers mapping a subscription to a handler
-            // Maybe able to subscribe to all events using the one handler
-            // Then I can use the client as the way to specify the endpoint to hit
+            // Register all subscribers with a common interface perhaps: 
+            // IMessageProcessor or IMessageReceiver for inbuild processors and polling respectively
+            // Background service will register all receivers and start listening
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,27 +45,28 @@ namespace messaging_sidecar
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
+            _ = app.UseEndpoints(endpoints =>
+              {
                 // Handles messages from the sidecar application to service bus
                 endpoints.MapPost("/v1/{topic:required}", async context =>
-                {
-                    var topic = context.Request.RouteValues["topic"].ToString();
-                    //var capPublisher = context.RequestServices.GetRequiredService<ICapPublisher>();
+                  {
+                      var topic = context.Request.RouteValues["topic"].ToString();
+                      var publisher = context.RequestServices.GetRequiredService<IPublish>();
 
-                    using var streamReader = new StreamReader(context.Request.Body);
-                    var body = await streamReader.ReadToEndAsync();
+                      using var streamReader = new StreamReader(context.Request.Body);
+                      var body = await streamReader.ReadToEndAsync();
+                      await publisher.Publish(body);
 
-                    try
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
-                    }
-                    catch
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    }
-                });
-            });
+                      try
+                      {
+                          context.Response.StatusCode = (int)HttpStatusCode.OK;
+                      }
+                      catch
+                      {
+                          context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                      }
+                  });
+              });
         }
     }
 }

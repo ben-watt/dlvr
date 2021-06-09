@@ -8,4 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.0.0-preview.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\messaging-sidecar.csproj" />
+  </ItemGroup>
 </Project>

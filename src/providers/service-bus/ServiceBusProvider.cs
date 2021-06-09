@@ -2,37 +2,74 @@
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using System.Threading;
+using messaging_sidecar;
 
 namespace service_bus
 {
-    public class ServiceBusProvider
+    public class ServiceBusProvider : IPublish
     {
-        public string ConnectionString { get; }
-        public string QueueName { get; }
+        private readonly ServiceBusConfiguration _config;
+
+        public ServiceBusProvider(ServiceBusConfiguration config)
+        {
+            _config = config;
+        }
 
         // Maybe a cloud event?
         // Return a value to indicate success
-        private async Task SendMessage(string messageContent)
+        public async Task Publish(string content)
         {
-            await using var client = new ServiceBusClient(ConnectionString);
-            var sender = client.CreateSender(QueueName);
+            await using var client = new ServiceBusClient(_config.ConnectionString);
+            var sender = client.CreateSender(_config.TopicName);
 
-            var content = Encoding.UTF8.GetBytes(messageContent).AsMemory();
-            var message = new ServiceBusMessage(content);
+            var encodedContent = Encoding.UTF8.GetBytes(content);
+            var message = new ServiceBusMessage(encodedContent.AsMemory());
 
             await sender.SendAsync(message);
         }
 
-        private async Task ReceiveMessage()
+        public async Task Receive()
         {
-            await using var client = new ServiceBusClient(ConnectionString);
-            var receiver = client.CreateReceiver(QueueName);
+            await using var client = new ServiceBusClient(_config.ConnectionString);
+
+            var options = new ServiceBusReceiverOptions();
+            var receiver = client.CreateReceiver(_config.TopicName, _config.Subscription, options);
 
             var receivedMessage = await receiver.ReceiveAsync();
 
             var fetchedMessageBody = receivedMessage.Body.ToString();
             Console.WriteLine(fetchedMessageBody);
         }
+
+        public async Task Process()
+        {
+            await using var client = new ServiceBusClient(_config.ConnectionString);
+
+            var options = new ServiceBusProcessorOptions();
+            var processor = client.CreateProcessor(_config.TopicName, _config.Subscription, options);
+
+            processor.ProcessMessageAsync += async (ProcessMessageEventArgs args) => {
+                string body = args.Message.Body.ToString();
+                Console.WriteLine(body);
+                await args.CompleteAsync(args.Message);
+            };
+
+            processor.ProcessErrorAsync += (ProcessErrorEventArgs args) => {
+                Console.WriteLine(args.ErrorSource);
+                Console.WriteLine(args.FullyQualifiedNamespace);
+                Console.WriteLine(args.EntityPath);
+                Console.WriteLine(args.Exception.ToString());
+                return Task.CompletedTask;
+            };
+
+            await processor.StartProcessingAsync();
+        }
+    }
+
+    public class ServiceBusConfiguration
+    {
+        public string ConnectionString { get; }
+        public string TopicName { get; }
+        public string Subscription { get; }
     }
 }
