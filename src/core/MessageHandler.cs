@@ -7,7 +7,7 @@ namespace messaging_sidecar
     /// <summary>
     /// Handles messages from service bus to the application
     /// </summary>
-    public class MessageHandler : ICapSubscribe
+    public class MessageHandler
     {
         private readonly HttpClient _client;
 
@@ -16,8 +16,7 @@ namespace messaging_sidecar
             _client = httpClientFactory.CreateClient("app");
         }
 
-        [CapSubscribe("*")]
-        public void ProcessMessage(object messageBody, [FromCap] CapHeader header)
+        public void ProcessMessage(object messageBody)
         {
             // Read in config and determain where to send the message
             // How do I work out where the message is from?

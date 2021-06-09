@@ -28,7 +28,7 @@ namespace component_tests
             var fakeFactory = new FakeHttpClientFactory();
             var sut = new MessageHandler(fakeFactory);
 
-            sut.ProcessMessage(null, null);
+            sut.ProcessMessage(null);
 
             Assert.Single(fakeFactory.GetRequestMessages());
         }
@@ -39,7 +39,7 @@ namespace component_tests
             var fakeFactory = new FakeHttpClientFactory();
             var sut = new MessageHandler(fakeFactory);
 
-            sut.ProcessMessage(new Message("test-content"), null);
+            sut.ProcessMessage(new Message("test-content"));
 
             var message = fakeFactory.GetRequestMessages()[0];
             var content = await message.Content.ReadFromJsonAsync<Message>();
