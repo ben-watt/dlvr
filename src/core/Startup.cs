@@ -7,9 +7,6 @@ using Savorboard.CAP.InMemoryMessageQueue;
 using System;
 using System.Net;
 using System.IO;
-using System.Reflection.Emit;
-using DotNetCore.CAP.Internal;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
 namespace messaging_sidecar
@@ -24,15 +21,6 @@ namespace messaging_sidecar
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCap(x =>
-            {
-                // From config determain the provider to use
-                // InMemory vs ServiceBus
-                // Maybe Kafka?
-                x.UseInMemoryStorage();
-                x.UseInMemoryMessageQueue();
-            });
-
             // Add multiple http clients with different retry policies
             services.AddHttpClient("app", x =>
             {
@@ -45,7 +33,6 @@ namespace messaging_sidecar
             // Add subscribers mapping a subscription to a handler
             // Maybe able to subscribe to all events using the one handler
             // Then I can use the client as the way to specify the endpoint to hit
-            services.AddTransient<ICapSubscribe, MessageHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -63,14 +50,13 @@ namespace messaging_sidecar
                 endpoints.MapPost("/v1/{topic:required}", async context =>
                 {
                     var topic = context.Request.RouteValues["topic"].ToString();
-                    var capPublisher = context.RequestServices.GetRequiredService<ICapPublisher>();
+                    //var capPublisher = context.RequestServices.GetRequiredService<ICapPublisher>();
 
                     using var streamReader = new StreamReader(context.Request.Body);
                     var body = await streamReader.ReadToEndAsync();
 
                     try
                     {
-                        await capPublisher.PublishAsync<object>(topic, body);
                         context.Response.StatusCode = (int)HttpStatusCode.OK;
                     }
                     catch

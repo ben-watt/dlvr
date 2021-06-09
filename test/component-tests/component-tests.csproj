@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\messaging-sidecar.csproj" />
+    <ProjectReference Include="..\..\src\core\messaging-sidecar.csproj" />
   </ItemGroup>
 
 </Project>

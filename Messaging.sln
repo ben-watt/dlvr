@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.6.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "messaging-sidecar", "src\messaging-sidecar.csproj", "{A11C9465-E84E-44BD-B141-542C3A8C9C3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "messaging-sidecar", "src\core\messaging-sidecar.csproj", "{A11C9465-E84E-44BD-B141-542C3A8C9C3A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1A40825B-5012-4B3F-86E5-20F47F99E794}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "component-tests", "test\component-tests\component-tests.csproj", "{A08D8441-7C05-4556-B061-AAF974EA76DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F068E629-E751-4B17-BC0D-B0D82B1E3FBC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "providers", "providers", "{8A17E0E3-2512-464D-A27B-6F725A96D082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "service-bus", "src\providers\service-bus\service-bus.csproj", "{FB8A1374-F772-4258-A58B-698AFC709389}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,8 +52,22 @@ Global
 		{A08D8441-7C05-4556-B061-AAF974EA76DD}.Release|x64.Build.0 = Release|Any CPU
 		{A08D8441-7C05-4556-B061-AAF974EA76DD}.Release|x86.ActiveCfg = Release|Any CPU
 		{A08D8441-7C05-4556-B061-AAF974EA76DD}.Release|x86.Build.0 = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|x64.Build.0 = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Debug|x86.Build.0 = Debug|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|x64.ActiveCfg = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|x64.Build.0 = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|x86.ActiveCfg = Release|Any CPU
+		{FB8A1374-F772-4258-A58B-698AFC709389}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A08D8441-7C05-4556-B061-AAF974EA76DD} = {1A40825B-5012-4B3F-86E5-20F47F99E794}
+		{8A17E0E3-2512-464D-A27B-6F725A96D082} = {F068E629-E751-4B17-BC0D-B0D82B1E3FBC}
+		{FB8A1374-F772-4258-A58B-698AFC709389} = {8A17E0E3-2512-464D-A27B-6F725A96D082}
 	EndGlobalSection
 EndGlobal
