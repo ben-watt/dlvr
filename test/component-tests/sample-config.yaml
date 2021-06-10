@@ -1,21 +1,21 @@
 version: 0.1
 message_providers:
-  - service_bus:
-      name: sb
-      connection_string: ""
-      subscriptions:
-        - name: hello
-          topic_name: sorted-test
-          handler:
-            name: default
-            args: 
-              endpoint: "/test"
-        - name: anther-one
-          topic_name: sorted-test
-          handler:
-            name: default
-            args: 
-              endpoint: "/test"
+  - type: service_bus
+    name: sb
+    connection_string: ""
+    subscriptions:
+      - name: hello
+        topic_name: sorted-test
+        handler:
+          name: default
+          args:
+            endpoint: "/test"
+      - name: anther-one
+        topic_name: sorted-test
+        handler:
+          name: default
+          args: 
+            endpoint: "/test"
 
 storage_providers:
   - type: in_memory

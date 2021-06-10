@@ -25,4 +25,10 @@
     <ProjectReference Include="..\..\src\core\messaging-sidecar.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="sample-config.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
