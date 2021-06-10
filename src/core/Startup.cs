@@ -5,6 +5,7 @@ using System.Net;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using messaging_sidecar_interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace messaging_sidecar
 {
@@ -22,7 +23,7 @@ namespace messaging_sidecar
             services.AddMessageProxy();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             app.UseRouting();
 
@@ -39,6 +40,7 @@ namespace messaging_sidecar
                       using var streamReader = new StreamReader(context.Request.Body);
                       var body = await streamReader.ReadToEndAsync();
                       await publisher.Publish(topic, body);
+                      logger.LogInformation("Published message via path: {0}", context.Request.Path);
 
                       try
                       {
