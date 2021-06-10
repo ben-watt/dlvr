@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using messaging_sidecar;
+using messaging_sidecar_interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace component_tests
@@ -26,9 +27,9 @@ namespace component_tests
         public async Task When_sending_a_message_with_a_null_body_then_still_perform_post_request()
         {
             var fakeFactory = new FakeHttpClientFactory();
-            var sut = new MessageHandler(fakeFactory);
+            var sut = new HttpHandler(fakeFactory, "app", "/test");
 
-            sut.ProcessMessage(null);
+            sut.Handle(null);
 
             Assert.Single(fakeFactory.GetRequestMessages());
         }
@@ -37,9 +38,10 @@ namespace component_tests
         public async Task When_sending_a_message_with_body_perform_post_request()
         {
             var fakeFactory = new FakeHttpClientFactory();
-            var sut = new MessageHandler(fakeFactory);
+            var sut = new HttpHandler(fakeFactory, "app", "/test");
 
-            sut.ProcessMessage(new Message("test-content"));
+            var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));
+            sut.Handle(messageFromBus.AsMemory());
 
             var message = fakeFactory.GetRequestMessages()[0];
             var content = await message.Content.ReadFromJsonAsync<Message>();

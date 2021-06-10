@@ -9,16 +9,22 @@ namespace service_bus_dependency_injection
     {
         public static void AddServiceBusPublisher(this IServiceCollection services, string name)
         {
-            var options = new ServiceBusProviderOptions();
-            services.AddTransient<IPublish>(_ => new ServiceBusProvider(options));
+            var options = new ServiceBusPublisherConfig();
+            services.AddTransient<IPublish>(_ => new ServiceBusTopicPublisher(options));
         }
 
-        public static void AddServiceBusPublisher(this IServiceCollection services, string name, Action<ServiceBusProviderOptions> configure)
+        public static void AddServiceBusPublisher(this IServiceCollection services, string name, Action<ServiceBusPublisherConfig> configure)
         {
-            var options = new ServiceBusProviderOptions();
+            var options = new ServiceBusPublisherConfig();
             configure(options);
-            services.AddTransient<IPublish>( _ => new ServiceBusProvider(options));
-            services.AddPublisher(name, _ => new ServiceBusProvider(options));
+            services.AddPublisher(name, _ => new ServiceBusTopicPublisher(options));
+        }
+
+        public static void AddServiceBusProcessor(this IServiceCollection services, Action<ServiceBusProcessorConfig> configure)
+        {
+            var options = new ServiceBusProcessorConfig();
+            configure(options);
+            services.AddTransient<IProcess>(sp => new ServiceBusSubscriptionProcessor(options, sp.GetRequiredService<IFactory<IHandler>>()));
         }
     }
 }

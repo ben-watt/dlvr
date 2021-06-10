@@ -1,24 +1,26 @@
-queue_providers:
+message_providers:
   - service_bus:
       connection_string: ""
       subscriptions:
         - name: hello
-          handler: default
+          topic_name: sorted-test
+          handler:
+            name: default
+            args: 
+              endpoint: "/test"
         - name: anther-one
-          handler: default
+          topic_name: sorted-test
+          handler:
+            name: default
+            args: 
+              endpoint: "/test"
 
 storage_providers:
   - type: in_memory
-  - type: database
-    connection_string: ""
 
-clients:
-  - name: my-app
+handlers:
+  - type: http
+    name: default
     base_uri: "/my-service"
     port: 8000
     retry_policy: exponential
-
-handlers:
-  - name: default
-    type: http
-    client: "my-app"

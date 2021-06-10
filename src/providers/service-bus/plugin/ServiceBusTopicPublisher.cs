@@ -6,11 +6,11 @@ using messaging_sidecar_interfaces;
 
 namespace service_bus
 {
-    public class ServiceBusProvider : IPublish
+    public class ServiceBusTopicPublisher : IPublish
     {
-        private readonly ServiceBusProviderOptions _config;
+        private readonly ServiceBusPublisherConfig _config;
 
-        public ServiceBusProvider(ServiceBusProviderOptions config)
+        public ServiceBusTopicPublisher(ServiceBusPublisherConfig config)
         {
             _config = config;
         }
@@ -27,30 +27,29 @@ namespace service_bus
 
             await sender.SendAsync(message);
         }
+    }
 
-        public async Task Receive()
+    public class ServiceBusSubscriptionProcessor : IProcess
+    {
+        private readonly ServiceBusProcessorConfig _config;
+        private readonly IFactory<IHandler> _handlerFactory;
+
+        public ServiceBusSubscriptionProcessor(ServiceBusProcessorConfig config, IFactory<IHandler> handlerFactory)
         {
-            await using var client = new ServiceBusClient(_config.ConnectionString);
-
-            var options = new ServiceBusReceiverOptions();
-            var receiver = client.CreateReceiver("", _config.Subscription, options);
-
-            var receivedMessage = await receiver.ReceiveAsync();
-
-            var fetchedMessageBody = receivedMessage.Body.ToString();
-            Console.WriteLine(fetchedMessageBody);
+            _config = config;
+            _handlerFactory = handlerFactory;
         }
 
         public async Task Process()
         {
             await using var client = new ServiceBusClient(_config.ConnectionString);
+            var handler = _handlerFactory.Create(_config.HandlerName);
 
             var options = new ServiceBusProcessorOptions();
-            var processor = client.CreateProcessor("", _config.Subscription, options);
+            var processor = client.CreateProcessor(_config.TopcicName, _config.SubscriptionName, options);
 
             processor.ProcessMessageAsync += async (ProcessMessageEventArgs args) => {
-                string body = args.Message.Body.ToString();
-                Console.WriteLine(body);
+                await handler.Handle(args.Message.Body);
                 await args.CompleteAsync(args.Message);
             };
 
@@ -66,9 +65,16 @@ namespace service_bus
         }
     }
 
-    public class ServiceBusProviderOptions
+    public class ServiceBusPublisherConfig
     {
         public string ConnectionString { get; set; }
-        public string Subscription { get; set; }
+    }
+
+    public class ServiceBusProcessorConfig
+    {
+        public string ConnectionString { get; set; }
+        public string SubscriptionName { get; set; }
+        public string TopcicName { get; set; }
+        public string HandlerName { get; set; }
     }
 }

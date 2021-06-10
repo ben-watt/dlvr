@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Net;
 using System.IO;
@@ -21,32 +20,33 @@ namespace messaging_sidecar
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add multiple http clients with different retry policies dependant on config
-            // for now just keep a default one
-            services.AddHttpClient("default", x =>
+            services.AddHttpClient("app", x =>
             {
-                // Create a default client which will point to the relevant application
                 const string appPort = "5000";
                 x.BaseAddress = new Uri($"http://localhost:{appPort}");
                 x.Timeout = new TimeSpan(0, 0, 5);
             });
 
-            // Register all subscribers with a common interface perhaps: 
-            // IMessageProcessor or IMessageReceiver for inbuild processors and polling respectively
-            // Background service will register all receivers and start listening
+            var connectionString = "";
 
-            /// Publishes messages to a service bus topic
-            /// By default the topic name is derived from the endpoint
-            services.AddServiceBusPublisher("test");
+            services.AddServiceBusPublisher("test", config =>
+            {
+                config.ConnectionString = connectionString;
+            });
+
+            services.AddHttpHandler(name: "default", clientName: "app", endpoint: "/app-endpoint");
+
+            services.AddServiceBusProcessor(config =>
+            {
+                config.ConnectionString = connectionString;
+                config.TopcicName = "";
+                config.SubscriptionName = "";
+                config.HandlerName = "default";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseRouting();
 
             _ = app.UseEndpoints(endpoints =>
