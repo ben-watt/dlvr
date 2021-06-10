@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Net;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using messaging_sidecar_interfaces;
-using service_bus_dependency_injection;
 
 namespace messaging_sidecar
 {
@@ -18,31 +16,10 @@ namespace messaging_sidecar
         {
             _config = config;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient("app", x =>
-            {
-                const string appPort = "5000";
-                x.BaseAddress = new Uri($"http://localhost:{appPort}");
-                x.Timeout = new TimeSpan(0, 0, 5);
-            });
-
-            var connectionString = "";
-
-            services.AddServiceBusPublisher("test", config =>
-            {
-                config.ConnectionString = connectionString;
-            });
-
-            services.AddHttpHandler(name: "default", clientName: "app", endpoint: "/app-endpoint");
-
-            services.AddServiceBusProcessor(config =>
-            {
-                config.ConnectionString = connectionString;
-                config.TopcicName = "";
-                config.SubscriptionName = "";
-                config.HandlerName = "default";
-            });
+            services.AddMessageProxy();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -51,11 +28,13 @@ namespace messaging_sidecar
 
             _ = app.UseEndpoints(endpoints =>
               {
-                // Handles messages from the sidecar application to service bus
-                endpoints.MapPost("/v1/{topic:required}", async context =>
+                endpoints.MapPost("/v1/{publisher:required}/{topic:required}", async context =>
                   {
                       var topic = context.Request.RouteValues["topic"].ToString();
-                      var publisher = context.RequestServices.GetRequiredService<IPublish>();
+                      var publisherName = context.Request.RouteValues["publisher"].ToString();
+
+                      var publisherFactory = context.RequestServices.GetRequiredService<IFactory<IPublish>>();
+                      var publisher = publisherFactory.Create(publisherName);
 
                       using var streamReader = new StreamReader(context.Request.Body);
                       var body = await streamReader.ReadToEndAsync();

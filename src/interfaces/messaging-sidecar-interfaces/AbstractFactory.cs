@@ -5,8 +5,8 @@ namespace messaging_sidecar_interfaces
 {
     public abstract class AbstractFactory<T> : IFactory<T>
     {
-        private readonly ConcurrentDictionary<string, Func<IServiceProvider, T>> _publishers = new();
-        private readonly IServiceProvider _serviceProvider;
+        protected readonly ConcurrentDictionary<string, Func<IServiceProvider, T>> _publishers = new();
+        protected readonly IServiceProvider _serviceProvider;
 
         protected AbstractFactory(IServiceProvider serviceProvider)
         {

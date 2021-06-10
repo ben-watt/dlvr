@@ -25,7 +25,7 @@ namespace service_bus
             var encodedContent = Encoding.UTF8.GetBytes(content);
             var message = new ServiceBusMessage(encodedContent.AsMemory());
 
-            await sender.SendAsync(message);
+            await sender.SendMessageAsync(message);
         }
     }
 
@@ -42,7 +42,7 @@ namespace service_bus
 
         public async Task Process()
         {
-            await using var client = new ServiceBusClient(_config.ConnectionString);
+            var client = new ServiceBusClient(_config.ConnectionString);
             var handler = _handlerFactory.Create(_config.HandlerName);
 
             var options = new ServiceBusProcessorOptions();
@@ -50,7 +50,7 @@ namespace service_bus
 
             processor.ProcessMessageAsync += async (ProcessMessageEventArgs args) => {
                 await handler.Handle(args.Message.Body);
-                await args.CompleteAsync(args.Message);
+                await args.CompleteMessageAsync(args.Message);
             };
 
             processor.ProcessErrorAsync += (ProcessErrorEventArgs args) => {

@@ -13,8 +13,8 @@ namespace messaging_sidecar_interfaces
 
         public HttpHandler(IHttpClientFactory httpClientFactory, string clientName, string endpoint)
         {
-            _endpoint = endpoint;
             _client = httpClientFactory.CreateClient(clientName);
+            _endpoint = endpoint;
         }
 
         public async Task Handle(ReadOnlyMemory<byte> message)
