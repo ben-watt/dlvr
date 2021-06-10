@@ -28,7 +28,7 @@ namespace messaging_sidecar
 
             _ = app.UseEndpoints(endpoints =>
               {
-                endpoints.MapPost("/v1/{publisher:required}/{topic:required}", async context =>
+                endpoints.MapPost("/{publisher:required}/{topic:required}", async context =>
                   {
                       var topic = context.Request.RouteValues["topic"].ToString();
                       var publisherName = context.Request.RouteValues["publisher"].ToString();

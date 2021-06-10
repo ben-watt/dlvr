@@ -1,5 +1,6 @@
 message_providers:
   - service_bus:
+      name: sb
       connection_string: ""
       subscriptions:
         - name: hello
