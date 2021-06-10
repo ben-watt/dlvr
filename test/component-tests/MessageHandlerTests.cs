@@ -38,7 +38,7 @@ namespace component_tests
         public async Task When_sending_a_message_with_body_perform_post_request()
         {
             var fakeFactory = new FakeHttpClientFactory();
-            var sut = new HttpHandler(fakeFactory, "app", "/test");
+            var sut = new HttpHandler(fakeFactory, "app", "/message-inbound");
 
             var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));
             sut.Handle(messageFromBus.AsMemory());

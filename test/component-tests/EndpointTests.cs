@@ -1,10 +1,8 @@
-using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using messaging_sidecar;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace component_tests
@@ -19,14 +17,26 @@ namespace component_tests
         }
 
         [Fact]
-        public async Task When_sending_a_message_relay_returns_ok()
+        public async Task When_sending_a_message_to_unknown_publisher_return_not_found()
         {
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
-            var response = await client.PostAsJsonAsync("/v1/topic-name", message);
+            var response = await client.PostAsJsonAsync("/v1/unknown_publisher/messaging-sidecar-topic", message);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task When_sending_a_message_to_an_unknown_topic_return_not_found()
+        {
+            var client = _fixture.CreateClient();
+
+            var message = new Message("hello");
+            var response = await client.PostAsJsonAsync("/v1/sb/unknown-topic-name", message);
+
+            // ToDo: Make this return NotFound rather than internal server error
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
@@ -39,6 +49,19 @@ namespace component_tests
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Fact]
+        public async Task When_sending_a_message_return_ok()
+        {
+            var client = _fixture.CreateClient();
+
+            var message = new Message("hello");
+            var response = await client.PostAsJsonAsync("/v1/sb/messaging-sidecar-topic", message);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+
     }
 
     public record Message(string content);

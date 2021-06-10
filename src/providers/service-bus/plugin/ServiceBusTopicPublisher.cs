@@ -15,8 +15,7 @@ namespace service_bus
             _config = config;
         }
 
-        // Maybe a cloud event?
-        // Return a value to indicate success
+        // ToDo: Review using CloudEvents as part of the API
         public async Task Publish(string topic, string content)
         {
             await using var client = new ServiceBusClient(_config.ConnectionString);
@@ -25,7 +24,22 @@ namespace service_bus
             var encodedContent = Encoding.UTF8.GetBytes(content);
             var message = new ServiceBusMessage(encodedContent.AsMemory());
 
-            await sender.SendMessageAsync(message);
+
+            try
+            {
+                // ToDo: Outbox pattern
+                await sender.SendMessageAsync(message);
+            }
+            catch(ServiceBusException ex)
+            {
+                if(ex.Reason == ServiceBusFailureReason.MessagingEntityNotFound)
+                {
+                    throw new InvalidOperationException($"Unable to find topic '{topic}'");
+                }
+
+                // ToDo: Log the error
+                // ToDo: Mark the message for retry
+            }
         }
     }
 

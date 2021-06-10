@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace messaging_sidecar_interfaces
 {
-    public abstract class AbstractFactory<T> : IFactory<T>
+    public abstract class AbstractFactory<T> :  IFactory<T>
     {
         protected readonly ConcurrentDictionary<string, Func<IServiceProvider, T>> _publishers = new();
         protected readonly IServiceProvider _serviceProvider;
@@ -13,16 +13,14 @@ namespace messaging_sidecar_interfaces
             _serviceProvider = serviceProvider;
         }
 
-        public virtual T Create(string name)
+        public virtual T? Create(string name)
         {
             if(_publishers.TryGetValue(name, out var publish))
             {
                 return publish.Invoke(_serviceProvider);
             }
-            else
-            {
-                throw new Exception($"Unable get type {nameof(IPublish)} with the name '{name}'");
-            }
+
+            return default;
         }
 
         public virtual void Add(string name, Func<IServiceProvider, T> serviceBusProviderFunc)

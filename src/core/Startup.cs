@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.IO;
@@ -23,7 +22,7 @@ namespace messaging_sidecar
             services.AddMessageProxy();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, ILogger<Startup> logger)
         {
             app.UseRouting();
 
@@ -34,16 +33,22 @@ namespace messaging_sidecar
                       var topic = context.Request.RouteValues["topic"].ToString();
                       var publisherName = context.Request.RouteValues["publisher"].ToString();
 
-                      var publisherFactory = context.RequestServices.GetRequiredService<IFactory<IPublish>>();
-                      var publisher = publisherFactory.Create(publisherName);
-
+                      var publisherFactory = context.RequestServices.GetService<IFactory<IPublish>>();
                       using var streamReader = new StreamReader(context.Request.Body);
                       var body = await streamReader.ReadToEndAsync();
-                      await publisher.Publish(topic, body);
-                      logger.LogInformation("Published message via path: {0}", context.Request.Path);
+
+                      var publisher = publisherFactory.Create(publisherName);
+                      if (publisher is null)
+                      {
+                          logger.LogInformation("Unable to find {0} with the name: {1}", typeof(IPublish), context.Request.Path);
+                          context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                          return;
+                      }
 
                       try
                       {
+                          await publisher.Publish(topic, body);
+                          logger.LogInformation("Published message via path: {0}", context.Request.Path);
                           context.Response.StatusCode = (int)HttpStatusCode.OK;
                       }
                       catch

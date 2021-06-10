@@ -2,6 +2,8 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace messaging_sidecar_interfaces
@@ -19,7 +21,8 @@ namespace messaging_sidecar_interfaces
 
         public async Task Handle(ReadOnlyMemory<byte> message)
         {
-            await _client.PostAsJsonAsync(_endpoint, message.ToString());
+            var content = new ReadOnlyMemoryContent(message);
+            await _client.PostAsync(_endpoint, content);
         }
     }
 }
