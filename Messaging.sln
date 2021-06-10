@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "providers", "providers", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "service-bus", "src\providers\service-bus\plugin\service-bus.csproj", "{FB8A1374-F772-4258-A58B-698AFC709389}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aspnet-extensions", "src\providers\service-bus\aspnet-extensions\aspnet-extensions.csproj", "{C9C8A371-5BDF-4F3E-BE17-7D498D92CA78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "service-bus-dependency-injection", "src\providers\service-bus\aspnet-extensions\service-bus-dependency-injection.csproj", "{C9C8A371-5BDF-4F3E-BE17-7D498D92CA78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{F10F102E-B3D9-4742-A8CB-5202BEB54A93}"
 EndProject

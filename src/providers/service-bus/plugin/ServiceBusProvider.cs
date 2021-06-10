@@ -17,10 +17,10 @@ namespace service_bus
 
         // Maybe a cloud event?
         // Return a value to indicate success
-        public async Task Publish(string content)
+        public async Task Publish(string topic, string content)
         {
             await using var client = new ServiceBusClient(_config.ConnectionString);
-            var sender = client.CreateSender(_config.TopicName);
+            var sender = client.CreateSender(topic);
 
             var encodedContent = Encoding.UTF8.GetBytes(content);
             var message = new ServiceBusMessage(encodedContent.AsMemory());
@@ -33,7 +33,7 @@ namespace service_bus
             await using var client = new ServiceBusClient(_config.ConnectionString);
 
             var options = new ServiceBusReceiverOptions();
-            var receiver = client.CreateReceiver(_config.TopicName, _config.Subscription, options);
+            var receiver = client.CreateReceiver("", _config.Subscription, options);
 
             var receivedMessage = await receiver.ReceiveAsync();
 
@@ -46,7 +46,7 @@ namespace service_bus
             await using var client = new ServiceBusClient(_config.ConnectionString);
 
             var options = new ServiceBusProcessorOptions();
-            var processor = client.CreateProcessor(_config.TopicName, _config.Subscription, options);
+            var processor = client.CreateProcessor("", _config.Subscription, options);
 
             processor.ProcessMessageAsync += async (ProcessMessageEventArgs args) => {
                 string body = args.Message.Body.ToString();
@@ -68,8 +68,7 @@ namespace service_bus
 
     public class ServiceBusProviderOptions
     {
-        public string ConnectionString { get; }
-        public string TopicName { get; }
-        public string Subscription { get; }
+        public string ConnectionString { get; set; }
+        public string Subscription { get; set; }
     }
 }

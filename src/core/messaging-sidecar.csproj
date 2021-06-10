@@ -7,5 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\interfaces\messaging-sidecar-interfaces\messaging-sidecar-interfaces.csproj" />
+    <ProjectReference Include="..\providers\service-bus\aspnet-extensions\service-bus-dependency-injection.csproj" />
   </ItemGroup>
 </Project>

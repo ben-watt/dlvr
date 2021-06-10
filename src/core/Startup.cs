@@ -7,6 +7,7 @@ using System.Net;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using messaging_sidecar_interfaces;
+using service_bus_dependency_injection;
 
 namespace messaging_sidecar
 {
@@ -33,6 +34,10 @@ namespace messaging_sidecar
             // Register all subscribers with a common interface perhaps: 
             // IMessageProcessor or IMessageReceiver for inbuild processors and polling respectively
             // Background service will register all receivers and start listening
+
+            /// Publishes messages to a service bus topic
+            /// By default the topic name is derived from the endpoint
+            services.AddServiceBusPublisher("test");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -54,7 +59,7 @@ namespace messaging_sidecar
 
                       using var streamReader = new StreamReader(context.Request.Body);
                       var body = await streamReader.ReadToEndAsync();
-                      await publisher.Publish(body);
+                      await publisher.Publish(topic, body);
 
                       try
                       {
