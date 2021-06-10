@@ -1,5 +1,4 @@
-﻿using DotNetCore.CAP;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace messaging_sidecar

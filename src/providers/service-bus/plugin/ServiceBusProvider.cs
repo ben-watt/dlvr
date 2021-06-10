@@ -2,15 +2,15 @@
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using messaging_sidecar;
+using messaging_sidecar_interfaces;
 
 namespace service_bus
 {
     public class ServiceBusProvider : IPublish
     {
-        private readonly ServiceBusConfiguration _config;
+        private readonly ServiceBusProviderOptions _config;
 
-        public ServiceBusProvider(ServiceBusConfiguration config)
+        public ServiceBusProvider(ServiceBusProviderOptions config)
         {
             _config = config;
         }
@@ -66,7 +66,7 @@ namespace service_bus
         }
     }
 
-    public class ServiceBusConfiguration
+    public class ServiceBusProviderOptions
     {
         public string ConnectionString { get; }
         public string TopicName { get; }

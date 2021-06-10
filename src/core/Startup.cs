@@ -1,13 +1,12 @@
-using DotNetCore.CAP;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Savorboard.CAP.InMemoryMessageQueue;
 using System;
 using System.Net;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using messaging_sidecar_interfaces;
 
 namespace messaging_sidecar
 {

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>aspnet_extensions</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\interfaces\messaging-sidecar-interfaces\messaging-sidecar-interfaces.csproj" />
+    <ProjectReference Include="..\plugin\service-bus.csproj" />
+  </ItemGroup>
+</Project>
