@@ -10,4 +10,8 @@
     <ProjectReference Include="..\interfaces\messaging-sidecar-interfaces\messaging-sidecar-interfaces.csproj" />
     <ProjectReference Include="..\providers\service-bus\aspnet-extensions\service-bus-dependency-injection.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.1.0" />
+  </ItemGroup>
 </Project>
