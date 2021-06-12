@@ -109,7 +109,7 @@ namespace component_tests
                         Name = provider.GetValue<string>("name"),
                         Type = type,
                         ConnectionString = provider.GetValue<string>("connection_string"),
-                        SubscriptionOptions = MapSubscriptionOptions(provider.GetSection("subscriptions")).ToList()
+                        SubscriptionOptions = MapSubscriptionOptions(provider.GetSection("subscriptions"))
                     };
                 }
             }
