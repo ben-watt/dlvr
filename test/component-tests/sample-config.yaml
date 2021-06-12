@@ -6,16 +6,14 @@ message_providers:
     subscriptions:
       - name: hello
         topic_name: sorted-test
-        handler:
-          name: default
-          args:
-            endpoint: "/test"
+        handler_name: default
+        handler_args:
+          endpoint: "/test"
       - name: anther-one
         topic_name: sorted-test
-        handler:
-          name: default
-          args: 
-            endpoint: "/test"
+        handler_name: default
+        handler_args:
+          endpoint: "/test"
 
 storage_providers:
   - type: in_memory
@@ -23,6 +21,6 @@ storage_providers:
 handlers:
   - type: http
     name: default
-    base_uri: "/my-service"
+    base_uri: https://localhost/my-service
     port: 8000
     retry_policy: exponential

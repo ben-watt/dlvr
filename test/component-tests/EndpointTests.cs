@@ -22,7 +22,7 @@ namespace component_tests
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
-            var response = await client.PostAsJsonAsync("/v1/unknown_publisher/messaging-sidecar-topic", message);
+            var response = await client.PostAsJsonAsync("/unknown_publisher/messaging-sidecar-topic", message);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -33,7 +33,7 @@ namespace component_tests
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
-            var response = await client.PostAsJsonAsync("/v1/sb/unknown-topic-name", message);
+            var response = await client.PostAsJsonAsync("/sb/unknown-topic-name", message);
 
             // ToDo: Make this return NotFound rather than internal server error
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -45,7 +45,7 @@ namespace component_tests
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
-            var response = await client.PostAsJsonAsync("/v1/", message);
+            var response = await client.PostAsJsonAsync("/", message);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -56,7 +56,7 @@ namespace component_tests
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
-            var response = await client.PostAsJsonAsync("/v1/sb/messaging-sidecar-topic", message);
+            var response = await client.PostAsJsonAsync("/sb/messaging-sidecar-topic", message);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
