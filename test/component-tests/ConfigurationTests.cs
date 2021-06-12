@@ -51,6 +51,20 @@ namespace component_tests
         }
 
         [Fact]
+        public void When_provider_parsed_map_subscriptions_handler()
+        {
+            _fixture.AddYamlFile("sample-config.yaml");
+            _fixture.CreateClient();
+
+            var config = _fixture.Services.GetService<IConfiguration>();
+
+            var providers = GetConfig(config).MessageProviderOptions;
+
+            var option = (ServiceBusProviderOption)providers.First();
+            Assert.NotNull(option.SubscriptionOptions.First().HandlerArgs);
+        }
+
+        [Fact]
         public void When_provider_parsed_map_handlers()
         {
             _fixture.AddYamlFile("sample-config.yaml");
