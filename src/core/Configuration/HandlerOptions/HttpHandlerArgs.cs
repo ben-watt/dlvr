@@ -2,6 +2,6 @@
 {
     public class HttpHandlerArgs
     {
-        
+        public string Endpoint { get; set; }
     }
 }

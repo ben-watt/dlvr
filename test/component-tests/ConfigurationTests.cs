@@ -1,4 +1,5 @@
 using messaging_sidecar.Configuration;
+using messaging_sidecar.Configuration.HandlerOptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,6 +12,7 @@ namespace component_tests
     public class ConfigurationTests : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly CustomWebApplicationFactory _fixture;
+        private static IEnumerable<HandlerOption> _handlers;
 
         public ConfigurationTests(CustomWebApplicationFactory fixture)
         {
@@ -61,6 +63,7 @@ namespace component_tests
             var providers = GetConfig(config).MessageProviderOptions;
 
             var option = (ServiceBusProviderOption)providers.First();
+            Assert.NotNull(option.SubscriptionOptions.First().HandlerName);
             Assert.NotNull(option.SubscriptionOptions.First().HandlerArgs);
         }
 
@@ -82,17 +85,19 @@ namespace component_tests
             Assert.Equal("exponential", option.RetryPolicy);
         }
 
-        private static ConfigOption GetConfig(IConfiguration config)
+        private ConfigOption GetConfig(IConfiguration config)
         {
+            _handlers = MapHandlerOptions(config.GetSection("handlers"));
+
             return new ConfigOption()
             {
                 Version = config.GetValue<string>("version"),
                 MessageProviderOptions = MessageProviderOptions(config.GetSection("message_providers")),
-                HandlerOptions = MapHandlerOptions(config.GetSection("handlers"))
+                HandlerOptions = _handlers
             };
         }
 
-        private static IEnumerable<HandlerOption> MapHandlerOptions(IConfigurationSection handlers)
+        private IEnumerable<HandlerOption> MapHandlerOptions(IConfigurationSection handlers)
         {
             foreach(var handler in handlers.GetChildren())
             {
@@ -111,7 +116,7 @@ namespace component_tests
             }
         }
 
-        private static IEnumerable<MessageProviderOption> MessageProviderOptions(IConfigurationSection messageProviders)
+        private IEnumerable<MessageProviderOption> MessageProviderOptions(IConfigurationSection messageProviders)
         {
             foreach (var provider in messageProviders.GetChildren())
             {
@@ -129,7 +134,7 @@ namespace component_tests
             }
         }
 
-        private static IEnumerable<ServiceBusSubscriptionOption> MapSubscriptionOptions(IConfigurationSection subscriptions)
+        private IEnumerable<ServiceBusSubscriptionOption> MapSubscriptionOptions(IConfigurationSection subscriptions)
         {
             foreach (var subscription in subscriptions.GetChildren())
             {
@@ -139,16 +144,28 @@ namespace component_tests
                     Name = subscription.GetValue<string>("name"),
                     TopicName = subscription.GetValue<string>("topic_name"),
                     HandlerName = handlerName,
-                    //HandlerArgs = MapHandlerArgs(handlerName)
+                    HandlerArgs = MapHandlerArgs(handlerName, subscriptions.GetSection("handler_args"))
                 };
             }
         }
 
-        //private static IReadOnlyDictionary<string, string> MapHandlerArgs(string handlerName)
-        //{
-        //    // Check if handler exists
-        //    // CHeck type
-        //    // Bind to args based on type
-        //}
+        private object MapHandlerArgs(string handlerName, IConfigurationSection handlerArgs)
+        {
+            var handler = _handlers.First(x => x.Name == handlerName);
+            if(handler is null)
+            {
+                throw new InvalidOperationException($"Unable to find a handler specified with the name {handlerName}");
+            }
+
+            if(handler.Type == "http")
+            {
+                return new HttpHandlerArgs()
+                {
+                    Endpoint = handlerArgs.GetValue<string>("endpoint")
+                };
+            } 
+
+            return default;
+        }
     }
 }
