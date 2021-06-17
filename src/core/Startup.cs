@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.IO;
-using Microsoft.Extensions.Configuration;
 using messaging_sidecar_interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -10,13 +9,6 @@ namespace messaging_sidecar
 {
     public class Startup
     {
-        private readonly IConfiguration _config;
-
-        public Startup(IConfiguration config)
-        {
-            _config = config;
-        }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMessageProxy();
@@ -37,7 +29,7 @@ namespace messaging_sidecar
                       using var streamReader = new StreamReader(context.Request.Body);
                       var body = await streamReader.ReadToEndAsync();
 
-                      var publisher = publisherFactory.Create(publisherName);
+                      var publisher = publisherFactory?.Create(publisherName);
                       if (publisher is null)
                       {
                           logger.LogInformation("Unable to find {0} with the name: {1}", typeof(IPublish), context.Request.Path);

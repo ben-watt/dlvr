@@ -15,7 +15,7 @@ namespace messaging_sidecar
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(configBuilder =>
                 {
-                    configBuilder.AddYamlFile("/config.yaml", true);
+                    configBuilder.AddYamlFile("/etc/messaging/config.yaml", true);
                     configBuilder.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
