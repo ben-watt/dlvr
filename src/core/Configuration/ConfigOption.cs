@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace messaging_sidecar.Configuration
 {
     public class ConfigOption
     {
-        public string Version { get; set; }
-        public IEnumerable<MessageProviderOption> MessageProviderOptions { get; set; }
-        public IEnumerable<HandlerOption> HandlerOptions { get; set; }
+        public ConfigOption(
+            string version,
+            IEnumerable<MessageProviderOption> messageProviderOptions,
+            IEnumerable<HandlerOption> handlerOptions)
+        {
+            Version = version;
+            MessageProviderOptions = messageProviderOptions;
+            HandlerOptions = handlerOptions;
+        }
+
+        public string Version { get; }
+        public IEnumerable<MessageProviderOption> MessageProviderOptions { get; }
+        public IEnumerable<HandlerOption> HandlerOptions { get; }
     }
 }

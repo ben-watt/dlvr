@@ -7,6 +7,6 @@ namespace messaging_sidecar.Configuration
         public string Name { get; set; }
         public string TopicName { get; set; }
         public string HandlerName { get; set; }
-        public object HandlerArgs { get; set; }
+        public object? HandlerArgs { get; set; }
     }
 }
