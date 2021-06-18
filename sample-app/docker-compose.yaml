@@ -9,8 +9,9 @@ services:
     ports:
       - "5000:80"
     configs:
-        - messaging_config
+      - source: messaging_config
+        target: /app/messaging_config/config.yaml
         
 configs:
   messaging_config:
-    file: ./messaging_config/config.yaml
+    file: /messaging_config/config.yaml

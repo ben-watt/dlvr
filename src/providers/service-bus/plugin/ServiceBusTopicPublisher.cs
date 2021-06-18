@@ -24,7 +24,6 @@ namespace service_bus
             var encodedContent = Encoding.UTF8.GetBytes(content);
             var message = new ServiceBusMessage(encodedContent.AsMemory());
 
-
             try
             {
                 // ToDo: Outbox pattern

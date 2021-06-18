@@ -13,7 +13,7 @@ namespace messaging_sidecar.Configuration
 
         public ConfigOptionBuilder(IConfiguration config)
         {
-            if (_config is null)
+            if (config is null)
                 throw new ArgumentException("Config is null. Has configuration been provided.");
 
             _config = config;

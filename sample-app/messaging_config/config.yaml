@@ -4,11 +4,11 @@ message_providers:
     name: sb
     connection_string: "Endpoint=sb://messaging-sidecar-servicebus-ns.servicebus.windows.net/;SharedAccessKeyName=messageApp;SharedAccessKey=w/o2UlRMV3O3MH9CVd4zzH5M4orbZS8dwR/m5/EQOUA="
     subscriptions:
-      - name: hello
-        topic_name: sorted-test
+      - name: messaging-sidecar-subscription
+        topic_name: messaging-sidecar-topic
         handler_name: default
         handler_args:
-          endpoint: /
+          endpoint: /handle-message
 
 storage_providers:
   - type: in_memory
@@ -16,6 +16,6 @@ storage_providers:
 handlers:
   - type: http
     name: default
-    base_uri: https://localhost/sample-app
+    base_uri: http://sample-app/
     port: 8000
     retry_policy: exponential

@@ -1,6 +1,11 @@
+using System;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
 
 namespace messaging_sidecar
 {
@@ -15,7 +20,7 @@ namespace messaging_sidecar
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(configBuilder =>
                 {
-                    configBuilder.AddYamlFile("/messaging_config", true);
+                    configBuilder.AddYamlFile("./messaging_config/config.yaml");
                     configBuilder.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>

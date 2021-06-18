@@ -16,9 +16,9 @@ namespace messaging_sidecar
         {
             var messagingConfig = new ConfigOptionBuilder(config).Build();
 
-            services.AddFactories();
             services.AddHostedService<BackgroundMessageListener>();
             services.AddHandlers(messagingConfig);
+            services.AddFactories();
             services.AddProviders(messagingConfig);
         }
 
@@ -36,7 +36,7 @@ namespace messaging_sidecar
                         AddServiceBusSubscription(services, serviceBusProvider, subscription);
                         if (messagingConfig.GetHandlerType(subscription.HandlerName) == "http")
                         {
-                            services.AddHttpHandler(subscription.Name, subscription.HandlerName, (HttpHandlerArgs)subscription.HandlerArgs);
+                            services.AddHttpHandler(subscription.HandlerName, (HttpHandlerArgs)subscription.HandlerArgs);
                         }
                     }
                 }
@@ -83,16 +83,16 @@ namespace messaging_sidecar
             {
                 var appPort = httpHandler.Port;
                 var address = httpHandler.BaseUri;
-                x.BaseAddress = new Uri($"http://{address}:{appPort}");
+                x.BaseAddress = new Uri($"{address}:{appPort}");
                 x.Timeout = new TimeSpan(0, 0, 5);
             });
         }
 
-        public static void AddHttpHandler(this IServiceCollection services, string name, string clientName, HttpHandlerArgs args)
+        public static void AddHttpHandler(this IServiceCollection services, string name, HttpHandlerArgs args)
         {
             var serviceProvider = services.BuildServiceProvider();
             var handlerFactory = serviceProvider.GetRequiredService<HandlerFactory>();
-            handlerFactory.Add(name, x => new HttpHandler(x.GetRequiredService<IHttpClientFactory>(), clientName, args));
+            handlerFactory.Add(name, x => new HttpHandler(x.GetRequiredService<IHttpClientFactory>(), name, args));
         }
     }
 }
