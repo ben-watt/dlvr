@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using messaging_sidecar;
+using messaging_sidecar.Configuration.HandlerOptions;
 using messaging_sidecar_interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
@@ -27,7 +28,11 @@ namespace component_tests
         public async Task When_sending_a_message_with_a_null_body_then_still_perform_post_request()
         {
             var fakeFactory = new FakeHttpClientFactory();
-            var sut = new HttpHandler(fakeFactory, "app", "/test");
+            var args = new HttpHandlerArgs() {
+                Endpoint = "/test"
+            };
+
+            var sut = new HttpHandler(fakeFactory, "app", args);
 
             sut.Handle(null);
 
@@ -38,7 +43,11 @@ namespace component_tests
         public async Task When_sending_a_message_with_body_perform_post_request()
         {
             var fakeFactory = new FakeHttpClientFactory();
-            var sut = new HttpHandler(fakeFactory, "app", "/message-inbound");
+            var args = new HttpHandlerArgs() {
+                Endpoint = "/message-inbound"
+            };
+            
+            var sut = new HttpHandler(fakeFactory, "app", args);
 
             var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));
             sut.Handle(messageFromBus.AsMemory());

@@ -1,5 +1,8 @@
 ﻿using messaging_sidecar;
+using messaging_sidecar.Configuration;
+using messaging_sidecar.Configuration.HandlerOptions;
 using messaging_sidecar_interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using service_bus_dependency_injection;
 using System;
@@ -9,32 +12,60 @@ namespace messaging_sidecar
 {
     public static class DependencyInjectionExtensions
     {
-        public static void AddMessageProxy(this IServiceCollection services)
+        public static void AddMessageProxy(this IServiceCollection services, IConfiguration config)
         {
-            // Clients must be registered first to ensure IHttpClientFactory is registered
-            AddClients(services);
-            AddFactories(services);
+            var messagingConfig = new ConfigOptionBuilder(config).Build();
 
-            services.AddHttpHandler(name: "default", clientName: "app", endpoint: "/app-endpoint");
-
-            var connectionString = "Endpoint=sb://messaging-sidecar-servicebus-ns.servicebus.windows.net/;SharedAccessKeyName=messageApp;SharedAccessKey=w/o2UlRMV3O3MH9CVd4zzH5M4orbZS8dwR/m5/EQOUA=";
-            services.AddServiceBusPublisher("sb", config =>
-            {
-                config.ConnectionString = connectionString;
-            });
-
-            services.AddServiceBusProcessor(config =>
-            {
-                config.ConnectionString = connectionString;
-                config.TopcicName = "messaging-sidecar-topic";
-                config.SubscriptionName = "messaging-sidecar-subscription";
-                config.HandlerName = "default";
-            });
-
+            services.AddFactories();
             services.AddHostedService<BackgroundMessageListener>();
+            services.AddHandlers(messagingConfig);
+            services.AddProviders(messagingConfig);
         }
 
-        private static void AddFactories(IServiceCollection services)
+        private static void AddProviders(this IServiceCollection services, ConfigOption messagingConfig)
+        {
+            foreach (var provider in messagingConfig.MessageProviderOptions)
+            {
+                if (provider.Type == "service_bus")
+                {
+                    var serviceBusProvider = (ServiceBusProviderOption)provider;
+                    services.AddServiceBusPublisher(serviceBusProvider.Name, config => config.ConnectionString = serviceBusProvider.ConnectionString);
+
+                    foreach (var subscription in serviceBusProvider.SubscriptionOptions)
+                    {
+                        AddServiceBusSubscription(services, serviceBusProvider, subscription);
+                        if (messagingConfig.GetHandlerType(subscription.HandlerName) == "http")
+                        {
+                            services.AddHttpHandler(subscription.Name, subscription.HandlerName, (HttpHandlerArgs)subscription.HandlerArgs);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void AddHandlers(this IServiceCollection services, ConfigOption messagingConfig)
+        {
+            foreach (var handler in messagingConfig.HandlerOptions)
+            {
+                if (handler.Type == "http")
+                {
+                    services.AddHttpClient(handler);
+                }
+            }
+        }
+
+        private static void AddServiceBusSubscription(IServiceCollection services, ServiceBusProviderOption serviceBusProvider, ServiceBusSubscriptionOption subscription)
+        {
+            services.AddServiceBusProcessor(config =>
+            {
+                config.ConnectionString = serviceBusProvider.ConnectionString;
+                config.TopcicName = subscription.TopicName;
+                config.SubscriptionName = subscription.Name;
+                config.HandlerName = subscription.HandlerName;
+            });
+        }
+
+        private static void AddFactories(this IServiceCollection services)
         {
             var publisherFactory = new PublisherFactory(services.BuildServiceProvider());
             services.AddSingleton(publisherFactory);
@@ -45,23 +76,23 @@ namespace messaging_sidecar
             services.AddSingleton<IFactory<IHandler>>(handlerFactory);
         }
 
-        private static void AddClients(IServiceCollection services)
+        private static void AddHttpClient(this IServiceCollection services, object handler)
         {
-            services.AddHttpClient("app", x =>
+            var httpHandler = (HttpHandlerOption)handler;
+            services.AddHttpClient(httpHandler.Name, x =>
             {
-                const string appPort = "5000";
-                x.BaseAddress = new Uri($"http://localhost:{appPort}");
+                var appPort = httpHandler.Port;
+                var address = httpHandler.BaseUri;
+                x.BaseAddress = new Uri($"http://{address}:{appPort}");
                 x.Timeout = new TimeSpan(0, 0, 5);
             });
         }
 
-        public static void AddHttpHandler(this IServiceCollection services, string name, string clientName, string endpoint)
+        public static void AddHttpHandler(this IServiceCollection services, string name, string clientName, HttpHandlerArgs args)
         {
             var serviceProvider = services.BuildServiceProvider();
             var handlerFactory = serviceProvider.GetRequiredService<HandlerFactory>();
-            handlerFactory.Add(name, x => {
-                return new HttpHandler(x.GetRequiredService<IHttpClientFactory>(), clientName, endpoint);
-            });
+            handlerFactory.Add(name, x => new HttpHandler(x.GetRequiredService<IHttpClientFactory>(), clientName, args));
         }
     }
 }

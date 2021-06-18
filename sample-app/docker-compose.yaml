@@ -1,0 +1,16 @@
+services:
+  sample-app:
+    build: .
+    ports:
+      - "8000:80"
+  side-car:
+    build: ../src
+    command: tail -F anything
+    ports:
+      - "5000:80"
+    configs:
+        - messaging_config
+        
+configs:
+  messaging_config:
+    file: ./messaging_config/config.yaml

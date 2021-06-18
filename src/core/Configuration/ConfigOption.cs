@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace messaging_sidecar.Configuration
 {
@@ -17,5 +19,10 @@ namespace messaging_sidecar.Configuration
         public string Version { get; }
         public IEnumerable<MessageProviderOption> MessageProviderOptions { get; }
         public IEnumerable<HandlerOption> HandlerOptions { get; }
+
+        internal string? GetHandlerType(string handlerName)
+        {
+            return HandlerOptions.FirstOrDefault(x => x.Name == handlerName)?.Type;
+        }
     }
 }

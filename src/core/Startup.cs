@@ -4,14 +4,22 @@ using System.Net;
 using System.IO;
 using messaging_sidecar_interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace messaging_sidecar
 {
     public class Startup
     {
+        private readonly IConfiguration _config;
+
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMessageProxy();
+            //services.AddMessageProxy(_config);
         }
 
         public void Configure(IApplicationBuilder app, ILogger<Startup> logger)

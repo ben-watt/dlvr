@@ -1,10 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace messaging_sidecar
+namespace sample_app
 {
-    public static class Program
+    public class Program
     {
         public static void Main(string[] args)
         {
@@ -13,11 +18,6 @@ namespace messaging_sidecar
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(configBuilder =>
-                {
-                    configBuilder.AddYamlFile("/messaging_config", true);
-                    configBuilder.AddEnvironmentVariables();
-                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
