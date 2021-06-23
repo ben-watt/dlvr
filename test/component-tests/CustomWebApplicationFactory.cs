@@ -30,7 +30,8 @@ namespace component_tests
             builder.ConfigureAppConfiguration(configBuilder =>
             {
                 configBuilder.SetBasePath(Directory.GetCurrentDirectory());
-                configBuilder.AddYamlFile(_yamlFilePath);
+                if(_yamlFilePath != null)
+                    configBuilder.AddYamlFile(_yamlFilePath);
             });
 
             return base.CreateHost(builder);

@@ -7,11 +7,11 @@ using Xunit;
 
 namespace component_tests
 {
-    public class Tests : IClassFixture<WebApplicationFactory<Startup>>
+    public class Tests : IClassFixture<CustomWebApplicationFactory>
     {
-        private readonly WebApplicationFactory<Startup> _fixture;
+        private readonly CustomWebApplicationFactory _fixture;
 
-        public Tests(WebApplicationFactory<Startup> fixture)
+        public Tests(CustomWebApplicationFactory fixture)
         {
             _fixture = fixture;
         }
