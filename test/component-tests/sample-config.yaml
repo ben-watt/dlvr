@@ -2,18 +2,18 @@ version: 0.1
 message_providers:
   - type: service_bus
     name: sb
-    connection_string: ""
+    connection_string: "Endpoint=sb://messaging-sidecar-servicebus-ns.servicebus.windows.net/;SharedAccessKeyName=messageApp;SharedAccessKey=test"
     subscriptions:
       - name: hello
         topic_name: sorted-test
         handler_name: default
         handler_args:
-          endpoint: "/test"
+          endpoint: /test
       - name: anther-one
         topic_name: sorted-test
         handler_name: default
         handler_args:
-          endpoint: "/test"
+          endpoint: /test
 
 storage_providers:
   - type: in_memory

@@ -63,7 +63,9 @@ namespace component_tests
 
             var option = (ServiceBusProviderOption)providers.First();
             Assert.NotNull(option.SubscriptionOptions.First().HandlerName);
-            Assert.NotNull(option.SubscriptionOptions.First().HandlerArgs);
+
+            var handlerArgs = (HttpHandlerArgs)option.SubscriptionOptions.First().HandlerArgs;
+            Assert.Equal("/test", handlerArgs.Endpoint);
         }
 
         [Fact]

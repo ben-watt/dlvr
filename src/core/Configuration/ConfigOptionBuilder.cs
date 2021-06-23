@@ -80,7 +80,7 @@ namespace messaging_sidecar.Configuration
                     Name = subscription.GetValue<string>("name"),
                     TopicName = subscription.GetValue<string>("topic_name"),
                     HandlerName = handlerName,
-                    HandlerArgs = MapHandlerArgs(handlerName, subscriptions.GetSection("handler_args"))
+                    HandlerArgs = MapHandlerArgs(handlerName, subscription.GetSection("handler_args"))
                 };
             }
         }
@@ -95,9 +95,10 @@ namespace messaging_sidecar.Configuration
 
             if (handler.Type == "http")
             {
+                var endpoint = handlerArgs.GetValue<string>("endpoint");
                 return new HttpHandlerArgs()
                 {
-                    Endpoint = handlerArgs.GetValue<string>("endpoint")
+                    Endpoint = endpoint
                 };
             }
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.IO;
-using System.Reflection;
 
 namespace component_tests
 {
@@ -17,6 +16,15 @@ namespace component_tests
             _yamlFilePath = path;
         }
 
+        protected override IHostBuilder CreateHostBuilder()
+        {
+            return Host.CreateDefaultBuilder()
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+        }
+
         protected override IHost CreateHost(IHostBuilder builder)
         {
             builder.ConfigureAppConfiguration(configBuilder =>
@@ -24,6 +32,7 @@ namespace component_tests
                 configBuilder.SetBasePath(Directory.GetCurrentDirectory());
                 configBuilder.AddYamlFile(_yamlFilePath);
             });
+
             return base.CreateHost(builder);
         }
     }
