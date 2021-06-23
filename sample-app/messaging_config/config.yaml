@@ -16,6 +16,6 @@ storage_providers:
 handlers:
   - type: http
     name: default
-    base_uri: http://sample-app/
-    port: 8000
+    base_uri: http://sample-app
+    port: 80
     retry_policy: exponential

@@ -24,7 +24,7 @@ namespace sample_app
         {
             services.AddControllers();
             services.AddHttpClient("message", x => {
-                x.BaseAddress = new Uri("http://side-car:5000");
+                x.BaseAddress = new Uri("http://side-car");
             });
         }
 
