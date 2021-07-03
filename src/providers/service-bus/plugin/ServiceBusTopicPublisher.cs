@@ -3,20 +3,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using messaging_sidecar_interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace service_bus
 {
     public class ServiceBusTopicPublisher : IPublish
     {
         private readonly ServiceBusPublisherConfig _config;
+        private readonly ILogger<ServiceBusTopicPublisher> _logger;
 
-        public ServiceBusTopicPublisher(ServiceBusPublisherConfig config)
+        public ServiceBusTopicPublisher(ServiceBusPublisherConfig config, ILogger<ServiceBusTopicPublisher> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         // ToDo: Review using CloudEvents as part of the API
-        public async Task Publish(string topic, string content)
+        public async Task<ProcessResponse> Publish(string topic, string content)
         {
             await using var client = new ServiceBusClient(_config.ConnectionString);
             var sender = client.CreateSender(topic);
@@ -28,16 +31,16 @@ namespace service_bus
             {
                 // ToDo: Outbox pattern
                 await sender.SendMessageAsync(message);
+                return ProcessResponse.Success;
             }
             catch(ServiceBusException ex)
             {
                 if(ex.Reason == ServiceBusFailureReason.MessagingEntityNotFound)
                 {
-                    throw new InvalidOperationException($"Unable to find topic '{topic}'");
+                    _logger.LogError("Failed with {0} {1}", nameof(ServiceBusFailureReason), nameof(ServiceBusFailureReason.MessageNotFound));
                 }
 
-                // ToDo: Log the error
-                // ToDo: Mark the message for retry
+                return ProcessResponse.Failed;
             }
         }
     }

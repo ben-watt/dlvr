@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using messaging_sidecar;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace component_tests
@@ -52,6 +50,8 @@ namespace component_tests
         [Fact]
         public async Task When_sending_a_message_return_ok()
         {
+            //ToDo: Add fake publisher to assert against specific response behaviours
+            _fixture.AddYamlFile("./sample-config.yaml");
             var client = _fixture.CreateClient();
 
             var message = new Message("hello");
@@ -59,8 +59,6 @@ namespace component_tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-
-
     }
 
     public record Message(string content);

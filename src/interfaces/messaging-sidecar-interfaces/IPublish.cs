@@ -4,7 +4,7 @@ namespace messaging_sidecar_interfaces
 {
     public interface IPublish
     {
-        Task Publish(string topic, string content);
+        Task<ProcessResponse> Publish(string topic, string content);
     }
 }
 
