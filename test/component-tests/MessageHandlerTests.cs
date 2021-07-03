@@ -46,7 +46,7 @@ namespace component_tests
             var args = new HttpHandlerArgs() {
                 Endpoint = "/message-inbound"
             };
-            
+
             var sut = new HttpHandler(fakeFactory, "app", args);
 
             var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));

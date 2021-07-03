@@ -44,10 +44,12 @@ namespace messaging_sidecar
                         logger.LogInformation("Unable to find {0} with the name: '{1}'", typeof(IPublish), publisherName);
                         context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     }
-
-                    await publisher.Publish(topic, body);
-                    logger.LogInformation("Published message via path: {0}", context.Request.Path);
-                    context.Response.StatusCode = (int)HttpStatusCode.OK;
+                    else
+                    {
+                        await publisher.Publish(topic, body);
+                        logger.LogInformation("Published message via path: {0}", context.Request.Path);
+                        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                    }
                   });
               });
         }

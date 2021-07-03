@@ -20,7 +20,7 @@ namespace messaging_sidecar_interfaces
                 return publish.Invoke(_serviceProvider);
             }
 
-            throw new NotImplementedException($"Unable to find a handler with the name '{name}'");
+            return default;
         }
 
         public virtual void Add(string name, Func<IServiceProvider, T> serviceBusProviderFunc)

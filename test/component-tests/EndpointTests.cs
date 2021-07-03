@@ -35,9 +35,7 @@ namespace component_tests
             var message = new Message("hello");
             var response = await client.PostAsJsonAsync("/sb/unknown-topic-name", message);
 
-            // ToDo: Make this return NotFound rather than internal server error
-            // when we don't find the topic name
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
