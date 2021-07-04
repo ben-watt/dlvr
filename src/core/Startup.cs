@@ -6,6 +6,7 @@ using messaging_sidecar_interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace messaging_sidecar
 {
@@ -28,30 +29,45 @@ namespace messaging_sidecar
             app.UseRouting();
 
             _ = app.UseEndpoints(endpoints =>
-              {
-                endpoints.MapPost("/{publisher:required}/{topic:required}", async context =>
-                  {
-                    var topic = context.Request.RouteValues["topic"].ToString();
-                    var publisherName = context.Request.RouteValues["publisher"].ToString();
+            {
+                endpoints.MapPost("/{publisher:required}/{topic:required}", PublishMessage(logger));
+            });
+        }
 
-                    var publisherFactory = context.RequestServices.GetService<IFactory<IPublish>>();
-                    using var streamReader = new StreamReader(context.Request.Body);
-                    var body = await streamReader.ReadToEndAsync();
+        private static RequestDelegate PublishMessage(ILogger<Startup> logger)
+        {
+            return async context =>
+            {
+                var topic = context.Request.RouteValues["topic"].ToString();
+                var publisherName = context.Request.RouteValues["publisher"].ToString();
 
-                    var publisher = publisherFactory?.Create(publisherName);
-                    if (publisher is null)
+                var publisherFactory = context.RequestServices.GetService<IFactory<IPublish>>();
+                using var streamReader = new StreamReader(context.Request.Body);
+                var body = await streamReader.ReadToEndAsync();
+
+                var publisher = publisherFactory?.Create(publisherName);
+                if (publisher is null)
+                {
+                    logger.LogInformation("Unable to find {0} with the name: '{1}'", typeof(IPublish), publisherName);
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                }
+                else
+                {
+                    var response = await publisher.Publish(topic, body);
+
+                    if (response == ProcessResponse.Success)
                     {
-                        logger.LogInformation("Unable to find {0} with the name: '{1}'", typeof(IPublish), publisherName);
-                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    }
-                    else
-                    {
-                        await publisher.Publish(topic, body);
                         logger.LogInformation("Published message via path: {0}", context.Request.Path);
                         context.Response.StatusCode = (int)HttpStatusCode.OK;
                     }
-                  });
-              });
+                    else
+                    {
+                        logger.LogInformation("Failed to publish message via path: {0}", context.Request.Path);
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    }
+
+                }
+            };
         }
     }
 }
