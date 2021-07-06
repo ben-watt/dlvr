@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: nebben101/message-sidecar:${{ GITVERSION_SEMVER }}
+          tags: nebben101/message-sidecar:${{ env.GITVERSION_SEMVER }}
           
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
