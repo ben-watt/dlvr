@@ -45,3 +45,19 @@ resource "azurerm_servicebus_subscription" "messaging-sidecar" {
   topic_name          = azurerm_servicebus_topic.messaging-sidecar.name
   max_delivery_count  = 1
 }
+
+resource "azurerm_servicebus_topic_authorization_rule" "messaging-sidecar" {
+  name                = "sidecar-account"
+  namespace_name      = azurerm_servicebus_namespace.messaging-sidecar.name
+  topic_name          = azurerm_servicebus_topic.messaging-sidecar.name
+  resource_group_name = azurerm_resource_group.messaging-sidecar.name
+  listen              = true
+  send                = true
+  manage              = false
+}
+
+output "connection_string" {
+  value = azurerm_servicebus_topic_authorization_rule.messaging-sidecar.primary_connection_string
+  description = "Connection string for accessing service bus"
+  sensitive = true
+}

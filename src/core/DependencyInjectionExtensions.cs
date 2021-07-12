@@ -17,9 +17,11 @@ namespace messaging_sidecar
             var messagingConfig = new ConfigOptionBuilder(config).Build();
 
             services.AddHostedService<BackgroundMessageListener>();
+            services.AddHostedService<BackgroundMessageProcessor>();
             services.AddHandlers(messagingConfig);
             services.AddFactories();
             services.AddProviders(messagingConfig);
+            services.AddSingleton<InMemoryStore>();
         }
 
         private static void AddProviders(this IServiceCollection services, ConfigOption messagingConfig)

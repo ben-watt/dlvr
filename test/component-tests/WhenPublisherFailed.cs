@@ -24,21 +24,21 @@ namespace component_tests
         }
 
         [Fact]
-        public async Task When_sending_a_message_to_unknown_publisher_return_not_found()
+        public async Task When_sending_a_message_to_unknown_publisher_return_OK()
         {
             var message = new Message("hello");
             var response = await _client.PostAsJsonAsync("/unknown_publisher/messaging-sidecar-topic", message);
 
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
-        public async Task When_sending_a_message_to_an_unknown_topic_return_not_found()
+        public async Task When_sending_a_message_to_an_unknown_topic_return_OK()
         {
             var message = new Message("hello");
             var response = await _client.PostAsJsonAsync("/sb/unknown-topic-name", message);
 
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
