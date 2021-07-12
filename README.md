@@ -67,8 +67,9 @@ Which states that your application wants to listen to a subscription named `hell
 
 ## To Do
 
-- Create other persistence providers
-- Support other message providers
+- Actually add a retry policy
 - More test coverage
   - Service Bus provider
   - Background service tests
+- Create other persistence providers
+- Support other message providers
