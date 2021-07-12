@@ -34,7 +34,7 @@ namespace component_tests
 
             var sut = new HttpHandler(fakeFactory, "app", args);
 
-            sut.Handle(null);
+            await sut.Handle(null);
 
             Assert.Single(fakeFactory.GetRequestMessages());
         }
@@ -50,7 +50,7 @@ namespace component_tests
             var sut = new HttpHandler(fakeFactory, "app", args);
 
             var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));
-            sut.Handle(messageFromBus.AsMemory());
+            await sut.Handle(messageFromBus.AsMemory());
 
             var message = fakeFactory.GetRequestMessages()[0];
             var content = await message.Content.ReadFromJsonAsync<Message>();
