@@ -8,9 +8,9 @@ Messaging can be a pain, it adds additional cognitive load to the already labore
 
 Also, it provides a couple of additional benefits:
 
-⚡ Handles all retry logic
-📤 Implements the Outbox pattern
-🧪 Improves application testability
+- ⚡ Handles all retry logic
+- 📤 Implements the Outbox pattern
+- 🧪 Improves application testability
 
 ## Usage
 
@@ -21,18 +21,16 @@ message_providers:
   - type: service_bus
     name: sb
     connection_string: <connection-string>
-
-storage_providers:
-  - type: in_memory
 ```
 
 Then fire it up 🚀
 
 ```sh
-docker run -p 8080:80 -v ${PWD}/config.yaml:/app/messaging_config/config.yaml -t nebben101/message-sidecar:latest
+docker run -p 8080:80 -v ./config.yaml:/app/messaging_config/config.yaml -t wattcode/message-sidecar:latest
 
 # You can now hit the service and publish messages to any topic (as long as it actually exists)
-curl http://localhost:8080/{message_provider_name}/{topic_name}
+# curl http://localhost:8080/{message_provider_name}/{topic_name}
+curl http://localhost:8080/sb/some-topic
 ```
 
 ### Subscriptions
@@ -50,9 +48,6 @@ message_providers:
         handler_name: default
         handler_args:
           endpoint: /test
-
-storage_providers:
-  - type: in_memory
 
 handlers:
   - type: http
