@@ -1,10 +1,10 @@
-# Delivery Boy
+# Dlvr
 
-Send and receive asynchronous messages without the fuss 📬🚴📭
+Send and receive asynchronous messages without the fuss 📬🚴💨📭
 
 ## Why?
 
-Messaging can be a pain, it adds additional cognitive load to the already labored mind of developers. Delivery Boy attempts to make things a little easier by providing a simple HTTP abstraction for asynchronous messaging.
+Messaging can be a pain, it adds additional cognitive load to the already labored mind of developers. Dlvr attempts to make things a little easier by providing a simple HTTP abstraction for asynchronous messaging.
 
 Also, it provides a couple of additional benefits:
 
@@ -73,3 +73,8 @@ Which states that your application wants to listen to a subscription named `hell
   - Background service tests
 - Create other persistence providers
 - Support other message providers
+- Rename test project
+- Add basic helm chart
+- Add side-car injector
+- Add control plane to see message usage across the system
+- Review cloud events wrapper
