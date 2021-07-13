@@ -21,7 +21,8 @@ namespace messaging_sidecar
                         {
                             { "Logging:LogLevel:Default", "Information" },
                             { "Logging:LogLevel:Microsoft", "Warning" },
-                            { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "Information" }
+                            { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "Information" },
+                            { "Logging:LogLevel:System.Net.Http.HttpClient", "Warning"}
                         });
 
                     configBuilder.AddYamlFile("./config.yaml");
