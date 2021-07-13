@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace messaging_sidecar
 {
@@ -15,7 +16,15 @@ namespace messaging_sidecar
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(configBuilder =>
                 {
-                    configBuilder.AddYamlFile("./messaging_config/config.yaml");
+                    configBuilder.AddInMemoryCollection(
+                        new Dictionary<string, string>()
+                        {
+                            { "Logging:LogLevel:Default", "Information" },
+                            { "Logging:LogLevel:Microsoft", "Warning" },
+                            { "Logging:LogLevel:Microsoft.Hosting.Lifetime", "Information" }
+                        });
+
+                    configBuilder.AddYamlFile("./config.yaml");
                     configBuilder.AddEnvironmentVariables();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>

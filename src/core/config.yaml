@@ -1,0 +1,6 @@
+﻿message_providers:
+  - type: test_provider
+    name: test
+
+storage_providers:
+  - type: in_memory

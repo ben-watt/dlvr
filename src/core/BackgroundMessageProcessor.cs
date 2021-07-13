@@ -44,7 +44,7 @@ namespace messaging_sidecar
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"Error with {nameof(BackgroundMessageProcessor)}. Shutting down listener.");
+                _logger.LogError(ex, $"Error with {nameof(BackgroundMessageProcessor)}. Shutting down background service.");
             }
         }
 
@@ -53,7 +53,8 @@ namespace messaging_sidecar
             var publisher = _publisherFactory.Create(message.publisherName);
             if (publisher is null)
             {
-                _logger.LogInformation("Unable to find {0} with the name: '{1}'", typeof(IPublish), message.publisherName);
+                _logger.LogInformation("Unable to find message_publisher with the name: '{1}'", message.publisherName);
+                return;
             }
 
             var response = await publisher.Publish(message.topic, message.body);
