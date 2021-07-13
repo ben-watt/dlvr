@@ -2,9 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,14 +27,24 @@ namespace messaging_sidecar
         {
             try
             {
+                // TODO: Think about splitting out by topic
+                // and how we should handle message processing
+                // in batch or sync
                 await foreach (var message in _store.GetMessages())
                 {
+                    if (stoppingToken.IsCancellationRequested)
+                        stoppingToken.ThrowIfCancellationRequested();
+
                     await Publish(message);
                 }
             }
+            catch(TaskCanceledException)
+            {
+                _logger.LogWarning($"Task cancelled. Stopping {nameof(BackgroundMessageProcessor)}");
+            }
             catch(Exception ex)
             {
-                _logger.LogError($"Error with {nameof(BackgroundMessageProcessor)}. Shutting down listener.", ex);
+                _logger.LogError(ex, $"Error with {nameof(BackgroundMessageProcessor)}. Shutting down listener.");
             }
         }
 
