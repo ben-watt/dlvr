@@ -26,7 +26,7 @@ message_providers:
 Then fire it up 🚀
 
 ```sh
-docker run -p 8080:80 -v ./config.yaml:/app/messaging_config/config.yaml -t wattcode/message-sidecar:latest
+docker run -p 8080:80 -v ./config.yaml:/app/messaging_config/config.yaml -t wattcode/messaging-sidecar:latest
 
 # You can now hit the service and publish messages to any topic (as long as it actually exists)
 # curl http://localhost:8080/{message_provider_name}/{topic_name}
