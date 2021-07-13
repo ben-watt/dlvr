@@ -59,11 +59,23 @@ handlers:
 
 Which states that your application wants to listen to a subscription named `hello` on the topic `hello-topic` and with a `http` handler named `default` and publish the messages to `https://localhost/my-service/test`
 
-## Providers
+## Message Providers
 
 | name | type | status |
 |---|---|---|
 | Service Bus Topics | `service_bus` | ✅ |
+
+## Storage Providers
+
+| name | type | status |
+|---|---|---|
+| In Memory | `in_memory` | ✅ |
+
+## Handlers
+
+| name | type | status |
+|---|---|---|
+| Http | `http` | ✅ |
 
 ## To Do
 
@@ -71,6 +83,8 @@ Which states that your application wants to listen to a subscription named `hell
 - More test coverage
   - Service Bus provider
   - Background service tests
+- Batch processing of messages
+- Performance tests
 - Create other persistence providers
 - Support other message providers
 - Rename test project
