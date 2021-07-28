@@ -26,8 +26,10 @@ message_providers:
 Then fire it up 🚀
 
 ```sh
-docker run -p 8080:80 -v ./config.yaml:/app/messaging_config/config.yaml -t wattcode/messaging-sidecar:latest
+docker run -p 8080:80 -v ./config.yaml:/app/messaging_config/config.yaml -t ghcr.io/wattcode/dlvr:latest
+```
 
+```sh
 # You can now hit the service and publish messages to any topic (as long as it actually exists)
 # curl http://localhost:8080/{message_provider_name}/{topic_name}
 curl http://localhost:8080/sb/some-topic
@@ -35,7 +37,7 @@ curl http://localhost:8080/sb/some-topic
 
 ### Subscriptions
 
-You can also tell Delivery Boy that you want to listen to messages on a given subscription by tweaking the config file slightly, to something like this:
+You can also tell Delivery Boy that you want to listen to messages on a given subscription by tweaking the config file to this:
 
 ```yaml
 message_providers:
@@ -79,7 +81,7 @@ Which states that your application wants to listen to a subscription named `hell
 
 ## To Do
 
-- Actually add a retry policy
+- Add a retry policy
 - More test coverage
   - Service Bus provider
   - Background service tests
