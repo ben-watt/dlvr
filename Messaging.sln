@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "component-tests", "test\com
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F068E629-E751-4B17-BC0D-B0D82B1E3FBC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "providers", "providers", "{8A17E0E3-2512-464D-A27B-6F725A96D082}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "message_providers", "message_providers", "{8A17E0E3-2512-464D-A27B-6F725A96D082}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "service-bus", "src\providers\service-bus\plugin\service-bus.csproj", "{FB8A1374-F772-4258-A58B-698AFC709389}"
 EndProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "interfaces", "interfaces", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "messaging-sidecar", "src\core\messaging-sidecar.csproj", "{642A66D3-B401-45CD-8E4C-1E457B7E83EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "messaging-sidecar-interfaces", "src\interfaces\messaging-sidecar-interfaces\messaging-sidecar-interfaces.csproj", "{8210B887-92B3-4705-866E-9948D3A58AFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "messaging-sidecar-interfaces", "src\interfaces\messaging-sidecar-interfaces\messaging-sidecar-interfaces.csproj", "{8210B887-92B3-4705-866E-9948D3A58AFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
