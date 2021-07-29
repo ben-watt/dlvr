@@ -58,6 +58,26 @@ namespace component_tests
             Assert.Equal("/message-inbound", message.RequestUri.ToString());
             Assert.Equal("test-content", content.content);
         }
+
+        [Fact]
+        public async Task When_sending_message_expect_content_type_json()
+        {
+            var fakeFactory = new FakeHttpClientFactory();
+            var args = new HttpHandlerArgs()
+            {
+                Endpoint = "/message-inbound"
+            };
+
+            var sut = new HttpHandler(fakeFactory, "app", args);
+
+            var messageFromBus = JsonSerializer.SerializeToUtf8Bytes(new Message("test-content"));
+            await sut.Handle(messageFromBus.AsMemory());
+
+            var message = fakeFactory.GetRequestMessages()[0];
+            var content = await message.Content.ReadFromJsonAsync<Message>();
+
+            Assert.Equal("application/json", message.Content.Headers.ContentType?.ToString());
+        }
     }
 
     internal class FakeHttpClientFactory : IHttpClientFactory
