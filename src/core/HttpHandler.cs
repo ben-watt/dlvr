@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using messaging_sidecar.Configuration.HandlerOptions;
@@ -24,6 +25,7 @@ namespace messaging_sidecar_interfaces
             Console.WriteLine(JsonSerializer.Serialize(_args));
             var client = _httpClientFactory.CreateClient(_clientName);
             var content = new ReadOnlyMemoryContent(message);
+            content.Headers.Add("Content-Type", "application/json");
             await client.PostAsync(_args.Endpoint, content);
         }
     }
