@@ -2,7 +2,7 @@ version: 0.1
 message_providers:
   - type: service_bus
     name: sb
-    connection_string: "Endpoint=sb://messaging-sidecar-servicebus-ns.servicebus.windows.net/;SharedAccessKeyName=messageApp;SharedAccessKey=w/o2UlRMV3O3MH9CVd4zzH5M4orbZS8dwR/m5/EQOUA="
+    connection_string: "Endpoint=sb://messaging-sidecar-servicebus-ns.servicebus.windows.net/;SharedAccessKeyName=sidecar-account;SharedAccessKey=c/w3pJjBBBhFHkKsHp4hPAqnngWk12lNUzuYdDQZ9Gk=;EntityPath=messaging-sidecar-topic"
     subscriptions:
       - name: messaging-sidecar-subscription
         topic_name: messaging-sidecar-topic

@@ -3,14 +3,23 @@ services:
     build: .
     ports:
       - "8000:80"
+    networks:
+      - myapp
   side-car:
     build: ../
     ports:
-      - "5000:80"
+      - "5000:5000"
+    networks:
+      - myapp
     configs:
       - source: messaging_config
         target: /app/config.yaml
+    environment:
+      ASPNETCORE_URLS: "http://+:5000/"
         
 configs:
   messaging_config:
     file: /messaging_config/config.yaml
+
+networks:
+  myapp:
